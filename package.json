@@ -1,0 +1,25 @@
+{
+  "name": "@rammbulanz/xhr",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marder/node-xhr.git"
+  },
+  "keywords": [
+    "XMLHttpRequest",
+    "node",
+    "typescript",
+    "javascript"
+  ],
+  "author": "Mike <iwashier@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/marder/node-xhr/issues"
+  },
+  "homepage": "https://github.com/marder/node-xhr#readme"
+}
