@@ -1,45 +1,70 @@
 
 export type RequestBodyLike = FormData | Object | string | undefined;
 
-export function request(method: "GET" | "POST", url: string, data?: RequestBodyLike): Promise<XMLHttpRequest> {
-    return new Promise(function (fulfill, reject) {
-        
-        let xhr = new XMLHttpRequest();
+export interface XMLHttpRequestOptions {
+	
+	headers?: any
 
-        xhr.open(method, url);
+	// Types
+	responseType?: XMLHttpRequestResponseType
 
-        xhr.addEventListener("error", function (e) {
-            reject(e.error);
-        });
+	// Callbacks
+	onreadystatechange?: Function
 
-        xhr.addEventListener("load", function (e) {
-            fulfill(xhr);
-        })
-
-        xhr.send(data);
-    });
 }
 
-export async function get(url: string, data?: RequestBodyLike): Promise<any> {
-    let xhr = await request("GET", url, data);
-    return xhr.response;
+export function request(method: "GET" | "POST", url: string, data?: RequestBodyLike, options?: XMLHttpRequestOptions): Promise<XMLHttpRequest> {
+	return new Promise(function (fulfill, reject) {
+
+		let xhr = new XMLHttpRequest();
+
+		xhr.open(method, url);
+
+		xhr.addEventListener("error", function (e) {
+			reject(e.error);
+		});
+
+		xhr.addEventListener("load", function (e) {
+			fulfill(xhr);
+		})
+
+		if (options) {
+			for (let key in options) {
+				switch (key) {
+					case "headers":
+						if (typeof options[key] === "string")
+							xhr.setRequestHeader(key, options[key] as string)
+						break;
+					default:
+						xhr[key] = options[key];
+				}
+			}
+		}
+
+		xhr.send(data);
+	});
 }
 
-export async function getJson(url: string, data?: RequestBodyLike) {
-    let xhr = await request("GET", url, data);
-
-    if (typeof xhr.response === "string") {
-        return JSON.parse(xhr.response);
-    }
-
-    return null;
+export async function get(url: string, data?: RequestBodyLike, options?: XMLHttpRequestOptions): Promise<any> {
+	let xhr = await request("GET", url, data, options);
+	return xhr.response;
 }
 
-export async function post(url: string, data?: RequestBodyLike): Promise<any> {
-    let xhr = await request("POST", url, data);
-    return xhr.response;
+export async function getJson(url: string, data?: RequestBodyLike, options?: XMLHttpRequestOptions) {
+	let response = await get(url, data, options);
+
+	if (typeof response === "string") {
+		return JSON.parse(response);
+	}
+
+	return null;
 }
-export async function postJson(url: string, data?: RequestBodyLike): Promise<any> {
-    let response = await post(url, data);
-    return JSON.parse(response);
+
+export async function post(url: string, data?: RequestBodyLike, options?: XMLHttpRequestOptions): Promise<any> {
+	let xhr = await request("POST", url, data, options);
+	return xhr.response;
+}
+export async function postJson(url: string, data?: RequestBodyLike, options?: XMLHttpRequestOptions): Promise<any> {
+	let response = await post(url, data, options);
+	return JSON.parse(response);
 }
